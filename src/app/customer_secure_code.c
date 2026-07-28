@@ -56,7 +56,7 @@
 /* sets the range over the lockable storage (0x4000-0x4800). Includes secret */
 #define LOCKABLE_FLASH_FIREWALL 0x00030000
 
-#define CSC_ENABLE_KEYSTORE
+//#define CSC_ENABLE_KEYSTORE
 
 #define BOOT_PRIMARY_SLOT 0
 #define BOOT_SECONDARY_SLOT 1
@@ -157,7 +157,8 @@ int main(void)
     goto noInitdoneLabel;
 #endif
 
-    if (DL_SYSCTL_isINITDONEIssued()) {
+    //if (DL_SYSCTL_isINITDONEIssued()) { // POSSIBLE IMPORTANT BUG, THIS FLAG SEEMS TO BE SET BY DEFAULT
+	if(0){
         /* Execution flow for the unprivileged state. Authentication should
          * already be accomplished and the verified image CMAC tag should live
          * in the locked storage. All firewalls should be active.
@@ -251,12 +252,12 @@ int main(void)
             }
 #endif
             /* Stores new secret and writes Keys into the KeyStore*/
-            Secret_writeOut();
+            //Secret_writeOut(); // AVOID LOCKING ANY SECTION
 
             /* stores keys based on secret information. Must be done after
              * the secret write out function. */
 #ifdef CSC_ENABLE_KEYSTORE
-            Keystore_storeKeys();
+           // Keystore_storeKeys(); // AVOID LOCKING ANY SECTION
 #endif
 
             Lock_writeStatus(LOCKSTG_BOOT_STATUS_SUCCESS);
@@ -278,14 +279,16 @@ int main(void)
             Lock_writeOut();
         }
 
-        /* Set Firewalls (to be enabled upon INITDONE) */
-        DL_SYSCTL_setWriteProtectFirewallAddrRange(
-            (uint32_t) LOCKABLE_FLASH_FIREWALL);
+        // /* Set Firewalls (to be enabled upon INITDONE) */
+        // DL_SYSCTL_setWriteProtectFirewallAddrRange( // AVOID LOCKING ANY SECTION
+        //     (uint32_t) LOCKABLE_FLASH_FIREWALL);// AVOID LOCKING ANY SECTION
 
-        DL_SYSCTL_setReadExecuteProtectFirewallAddrStart(CSC_SECRET_ADDR);
-        DL_SYSCTL_setReadExecuteProtectFirewallAddrEnd(CSC_SECRET_END);
+        // DL_SYSCTL_setReadExecuteProtectFirewallAddrStart(CSC_SECRET_ADDR);// AVOID LOCKING ANY SECTION
+        // DL_SYSCTL_setReadExecuteProtectFirewallAddrEnd(CSC_SECRET_END);// AVOID LOCKING ANY SECTION
 
-        DL_SYSCTL_enableReadExecuteProtectFirewall();
+        // DL_SYSCTL_enableReadExecuteProtectFirewall();// AVOID LOCKING ANY SECTION
+
+        start_app((uint32_t *) (PRIMARY_SLOT_OFFSET + 0x100));//FORCE APP START HERE DUE TO DL_SYSCTL_isINITDONEIssued POSSIBLE BUG
 
         DL_SYSCTL_issueINITDONE();
     }

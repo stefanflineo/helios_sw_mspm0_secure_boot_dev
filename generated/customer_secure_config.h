@@ -62,13 +62,13 @@
  * breach in security to all devices, or that a user can begin signing arbitrary
  * images that will run in all devices.
  */
-#define CSC_ENABLE_CMAC_ACCELERATION
+//#define CSC_ENABLE_CMAC_ACCELERATION
 
 /* CSC_ENABLE_ROLLBACK_PROTECTION - if the customer uploads a newer version of
  * the application, rollback protection will disallow previous versions from
  * being loaded onto the device.
  */
-#define CSC_ENABLE_ROLLBACK_PROTECTION
+//#define CSC_ENABLE_ROLLBACK_PROTECTION
 
 /*******************************************************************************
  *   KEY CONFIGURATION                                                         *
@@ -174,7 +174,7 @@
 #define CSC_LOCK_STORAGE_SIZE                                           (0x400)
 
 #define CSC_APPLICATION_IMAGE_BASE_ADDR                                (0x4800)
-#define CSC_APPLICATION_IMAGE_SIZE                                     (0x2800)
+#define CSC_APPLICATION_IMAGE_SIZE                                     (0xB600)
 
 #define CSC_PRIMARY_SLOT_OFFSET               (CSC_APPLICATION_IMAGE_BASE_ADDR)
 

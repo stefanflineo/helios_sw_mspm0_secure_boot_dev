@@ -33,7 +33,7 @@
 #include "aes_cmac.h"
 #include <string.h>
 #include "secret.h"
-
+#ifdef CSC_ENABLE_CMAC_ACCELERATION
 static CMAC_status gStatus;
 
 SecretUpdate_t *CMACUpdate     = &(gSecretUpdate.CMAC_Updated);
@@ -337,3 +337,4 @@ static inline uint32_t swap_bytes(uint32_t val)
     asm volatile("REV %0, %0" : "+r"(val));
     return val;
 }
+#endif
