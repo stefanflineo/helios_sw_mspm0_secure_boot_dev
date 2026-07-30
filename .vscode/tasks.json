@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CMake configure",
+      "type": "shell",
+      "command": "cmake --preset debug-tiarmclang-ninja",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CMake build",
+      "type": "shell",
+      "command": "cmake --build --preset debug --clean-first",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": "CMake configure",
+      "problemMatcher": []
+    }
+  ]
+}
