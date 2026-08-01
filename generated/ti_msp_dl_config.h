@@ -94,7 +94,7 @@ extern "C" {
 
 /* Defines for AESADV */
 #define AES_BLOCK_SIZE                                                     (16)
-#define AES_KEY_SIZE                                                       (16)
+#define AES_KEY_SIZE                                                       (32)
 
 
 

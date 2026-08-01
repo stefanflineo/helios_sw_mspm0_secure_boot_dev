@@ -149,7 +149,6 @@ int main(void)
     /* Sets the red LED solid during the validation phase. Will turn off
      * after the validation phase is complete.
      */
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_RED_PIN);
 
 #endif /* EXCLUDE_GPIOS */
 
@@ -188,7 +187,7 @@ int main(void)
          * static write protect enabled, and images are unverified, and
          * therefore must be authenticated.
          */
-
+        DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_RED_PIN);
 #ifdef DEBUG_NO_RESET_PATH
     noInitdoneLabel:
         __asm("nop");
