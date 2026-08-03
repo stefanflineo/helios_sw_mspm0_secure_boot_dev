@@ -153,3 +153,24 @@ add_custom_command(TARGET customer_secure_code.out POST_BUILD
             "${CMAKE_BINARY_DIR}/customer_secure_code-bank1-0x10000.bin"
     COMMENT "Generating customer_secure_code-bank1-0x10000.bin"
 )
+
+# ---------------------------------------------------------------------------
+# Post-build: produce the NONMAIN .bin (BCR + BSL config) as its own image.
+#
+# .BCRConfig and .BSLConfig live in the NONMAIN flash array, physically
+# separate from main flash (which is what customer_secure_code-bank1-0x10000.bin
+# above covers). NONMAIN is programmed as its own, independent flash write —
+# it cannot be appended/merged into the main-flash .bin. Address map, per
+# linker/mspm0l1117.cmd:
+#   .BCRConfig -> BCR_CONFIG region, origin 0x41C00000, length 0x100
+#   .BSLConfig -> BSL_CONFIG region, origin 0x41C00100, length 0x80
+# so this image spans NONMAIN offset 0x41C00000-0x41C00160 (352 bytes).
+# ---------------------------------------------------------------------------
+add_custom_command(TARGET customer_secure_code.out POST_BUILD
+    COMMAND "${TI_ARM_CLANG_PATH}/bin/tiarmobjcopy.exe"
+            "$<TARGET_FILE:customer_secure_code.out>"
+            --only-section=.BCRConfig --only-section=.BSLConfig
+            --output-target binary
+            "${CMAKE_BINARY_DIR}/customer_secure_code-nonmain-0x41c00000.bin"
+    COMMENT "Generating customer_secure_code-nonmain-0x41c00000.bin (NONMAIN @ 0x41C00000)"
+)
