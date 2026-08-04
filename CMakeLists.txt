@@ -142,35 +142,24 @@ set_target_properties(customer_secure_code.out PROPERTIES
 )
 
 # ---------------------------------------------------------------------------
-# Post-build: strip the non-main config sections and produce the raw .bin
-# image that gets flashed into the CSC bank, same as the CCS post-build step.
-# ---------------------------------------------------------------------------
-add_custom_command(TARGET customer_secure_code.out POST_BUILD
-    COMMAND "${TI_ARM_CLANG_PATH}/bin/tiarmobjcopy.exe"
-            "$<TARGET_FILE:customer_secure_code.out>"
-            -R .BCRConfig -R .BSLConfig -R .TI.bound*
-            --output-target binary
-            "${CMAKE_BINARY_DIR}/customer_secure_code-bank1-0x10000.bin"
-    COMMENT "Generating customer_secure_code-bank1-0x10000.bin"
-)
-
-# ---------------------------------------------------------------------------
-# Post-build: produce the NONMAIN .bin (BCR + BSL config) as its own image.
+# Post-build: generate both flashable images from customer_secure_code.out —
+#   customer_secure_code-bank1-0x10000.bin        main flash, 0x0-0x44A8
+#   customer_secure_code-nonmain-0x41c00000.bin    NONMAIN (BCR+BSL config),
+#                                                   0x41C00000-0x41C00160
 #
-# .BCRConfig and .BSLConfig live in the NONMAIN flash array, physically
-# separate from main flash (which is what customer_secure_code-bank1-0x10000.bin
-# above covers). NONMAIN is programmed as its own, independent flash write —
-# it cannot be appended/merged into the main-flash .bin. Address map, per
-# linker/mspm0l1117.cmd:
-#   .BCRConfig -> BCR_CONFIG region, origin 0x41C00000, length 0x100
-#   .BSLConfig -> BSL_CONFIG region, origin 0x41C00100, length 0x80
-# so this image spans NONMAIN offset 0x41C00000-0x41C00160 (352 bytes).
+# Delegated to cmake/generate_bins.cmake (invoked once, via execute_process)
+# rather than two chained, manually-quoted COMMAND clauses: chaining a second
+# manually-quoted custom command onto POST_BUILD via && is what corrupts
+# CMake's Windows/Ninja escaping (produces a malformed build.ninja that fails
+# to lex). Routing both tiarmobjcopy calls through one small script sidesteps
+# that entirely — no shell string is built to mis-escape.
 # ---------------------------------------------------------------------------
 add_custom_command(TARGET customer_secure_code.out POST_BUILD
-    COMMAND "${TI_ARM_CLANG_PATH}/bin/tiarmobjcopy.exe"
-            "$<TARGET_FILE:customer_secure_code.out>"
-            --only-section=.BCRConfig --only-section=.BSLConfig
-            --output-target binary
-            "${CMAKE_BINARY_DIR}/customer_secure_code-nonmain-0x41c00000.bin"
-    COMMENT "Generating customer_secure_code-nonmain-0x41c00000.bin (NONMAIN @ 0x41C00000)"
+    COMMAND ${CMAKE_COMMAND}
+            -DOBJCOPY=${TI_ARM_CLANG_PATH}/bin/tiarmobjcopy.exe
+            -DOUT_FILE=$<TARGET_FILE:customer_secure_code.out>
+            -DBIN_DIR=${CMAKE_BINARY_DIR}
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/generate_bins.cmake
+    COMMENT "Generating customer_secure_code-bank1-0x10000.bin (main flash) and customer_secure_code-nonmain-0x41c00000.bin (NONMAIN @ 0x41C00000)"
+    VERBATIM
 )

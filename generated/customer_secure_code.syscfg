@@ -20,6 +20,8 @@ const ProjectConfig = scripting.addModule("/ti/project_config/ProjectConfig");
 /**
  * Write custom configuration values to the imported modules.
  */
+AESADV.keySize = "DL_AESADV_KEY_SIZE_256_BIT";
+
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
 GPIO1.$name                         = "GPIO_LEDS";
@@ -29,23 +31,47 @@ GPIO1.associatedPins[0].pin.$assign = "PB17";
 GPIO2.$name                   = "GPIO_GRP_1";
 GPIO2.associatedPins[0].$name = "PIN_1";
 
-NONMAIN.nonmainWarning = true;
-NONMAIN.cscExists      = true;
-NONMAIN.flashBankSwap  = true;
-NONMAIN.bslMode        = false;
+NONMAIN.nonmainWarning    = true;
+NONMAIN.cscExists         = true;
+NONMAIN.flashBankSwap     = true;
+NONMAIN.debugAccessEnable = "enabledWithPW";
+NONMAIN.frMode            = "enabledWithPW";
+NONMAIN.swdPW0            = 0x89C546DB;
+NONMAIN.swdPW1            = 0x3B6D7E40;
+NONMAIN.swdPW2            = 0x76D63D0C;
+NONMAIN.swdPW3            = 0x8D47C036;
+NONMAIN.swdPW4            = 0x3F2D28E3;
+NONMAIN.swdPW5            = 0x3EB019C6;
+NONMAIN.swdPW6            = 0x4C7E28DA;
+NONMAIN.swdPW7            = 0xE230755A;
+NONMAIN.frPW0             = 0x89C546DB;
+NONMAIN.frPW1             = 0x3B6D7E40;
+NONMAIN.frPW2             = 0x76D63D0C;
+NONMAIN.frPW3             = 0x8D47C036;
+NONMAIN.frPW4             = 0x3F2D28E3;
+NONMAIN.frPW5             = 0x3EB019C6;
+NONMAIN.frPW6             = 0x4C7E28DA;
+NONMAIN.frPW7             = 0xE230755A;
+NONMAIN.bslMode           = false;
+NONMAIN.meMode            = "disabled";
 
-SECCONFIG.cscPrereqAck        = true;
-SECCONFIG.developmentOptions  = ["enablePseudoRandom"];
-SECCONFIG.cscBankSize         = 65536;
-SECCONFIG.cscSecretAddress    = 0x4000;
-SECCONFIG.cscSecretSize       = 1024;
-SECCONFIG.cscLockStorageSize  = 1024;
-SECCONFIG.cscAppImageBaseAddr = 0x4800;
-SECCONFIG.cscAppImageSize     = 10240;
+SECCONFIG.cscPrereqAck             = true;
+SECCONFIG.developmentOptions       = ["enablePseudoRandom"];
+SECCONFIG.cscBankSize              = 65536;
+SECCONFIG.cscSecretAddress         = 0x4000;
+SECCONFIG.cscSecretSize            = 1024;
+SECCONFIG.cscLockStorageSize       = 1024;
+SECCONFIG.cscAppImageBaseAddr      = 0x4800;
+SECCONFIG.unprivVerifyOptions      = ["addECDSAVerify","writeExecuteOnly"];
+SECCONFIG.enableRollbackProtection = false;
+SECCONFIG.enableIPProtection       = false;
+SECCONFIG.enableCMACAcceleration   = false;
+SECCONFIG.cscAppImageSize          = 47104;
 
 const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL", {}, false);
 
 ProjectConfig.genDisable = true;
+scripting.suppress("Project Configuration File generation is disabled for this project\\. SysConfig Project Migration is not currently supported for this project\\.", ProjectConfig);
 
 /**
  * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
