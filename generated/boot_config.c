@@ -68,10 +68,10 @@ const BCR_Config BCRConfig =
         0x76d63d0c, 0x8d47c036,
         0x3f2d28e3, 0x3eb019c6,
         0x4c7e28da, 0xe230755a},
-    .passwordDebugLock    = {0x89c546db, 0x3b6d7e40,
-        0x76d63d0c, 0x8d47c036,
-        0x3f2d28e3, 0x3eb019c6,
-        0x4c7e28da, 0xe230755a},
+    .passwordDebugLock    = {0x56b55f67, 0xfaf981d2,
+        0x74fd54ac, 0xd3d4dfc3,
+        0x5d3bcce4, 0xebd22562,
+        0x9153251d, 0xa96b2636},
     .bc_reserved_0                 = 0xFFFFU,
     .secureBootMode                = BCR_CFG_SECURE_BOOT_DIS,
     .userSecureAppStartAddr        = CFG_DEFAULT_VALUE,
@@ -81,7 +81,7 @@ const BCR_Config BCRConfig =
         CFG_DEFAULT_VALUE, CFG_DEFAULT_VALUE,
         CFG_DEFAULT_VALUE, CFG_DEFAULT_VALUE},
     .bc_reserved_1                 = 0xFFFFFFFFU,
-    .userCfgCRC                    = 0xdde0656,
+    .userCfgCRC                    = 0x12cc56b0,
 };
 
 
