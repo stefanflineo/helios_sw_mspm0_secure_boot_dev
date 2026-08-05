@@ -13,12 +13,25 @@
         "MSPM0_SDK": "C:/ti/mspm0_sdk_2_10_00_04",
         "TI_ARM_CLANG_PATH": "C:/ti/ccs2100/ccs/tools/compiler/ti-cgt-armllvm_5.1.1.LTS"
       }
+    },
+      {
+      "name": "release-tiarmclang-ninja",
+      "displayName": "Release TI ARM Clang + Ninja",
+      "inherits": "debug-tiarmclang-ninja",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ],
   "buildPresets": [
     {
       "name": "debug",
       "configurePreset": "debug-tiarmclang-ninja"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release-tiarmclang-ninja"
     }
   ]
 }
