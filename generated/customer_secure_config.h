@@ -117,14 +117,6 @@
 /*******************************************************************************
  *  MISCELLANEOUS                                                           *
  ******************************************************************************/
-/*
- * CSC_OMIT_TRNG - an option such that a consistent CMAC key will be generated
- * rather than generating a new key with the true random number generator.
- *
- * This can be used for testing purposes such that the device will always
- * generate the same key using rand() and a predictable seed.
- */
-#define CSC_OMIT_TRNG
 
 /* CSC_ENABLE_IP_PROTECTION - the customer will provide an IP Protection range
  * in the header, such that the CSC can enable the IP Protect firewall over a
@@ -174,7 +166,7 @@
 #define CSC_LOCK_STORAGE_SIZE                                           (0x400)
 
 #define CSC_APPLICATION_IMAGE_BASE_ADDR                                (0x4800)
-#define CSC_APPLICATION_IMAGE_SIZE                                     (0xB600)
+#define CSC_APPLICATION_IMAGE_SIZE                                     (0xB800)
 
 #define CSC_PRIMARY_SLOT_OFFSET               (CSC_APPLICATION_IMAGE_BASE_ADDR)
 
