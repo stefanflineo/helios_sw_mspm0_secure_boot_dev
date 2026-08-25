@@ -6,6 +6,7 @@
       "type": "cortex-debug",
       "request": "launch",
       "servertype": "jlink",
+      "showDevDebugOutput": "raw"
       "device": "MSPM0L1117",
       "interface": "swd",
       "cwd": "${workspaceFolder}",

@@ -4,14 +4,14 @@
     {
       "label": "CMake configure",
       "type": "shell",
-      "command": "cmake --preset release-tiarmclang-ninja",
+      "command": "cmake --preset debug-tiarmclang-ninja",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "CMake build",
       "type": "shell",
-      "command": "cmake --build --preset release --clean-first",
+      "command": "cmake --build --preset debug --clean-first",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -25,7 +25,7 @@
       "command": "cmake",
       "args": [
         "--build",
-        "--preset", "release",
+        "--preset", "debug",
         "--clean-first"
       ],
       "group": {

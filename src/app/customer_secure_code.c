@@ -156,8 +156,8 @@ int main(void)
     goto noInitdoneLabel;
 #endif
 
-    //if (DL_SYSCTL_isINITDONEIssued()) { // POSSIBLE IMPORTANT BUG, THIS FLAG SEEMS TO BE SET BY DEFAULT
-	if(0){
+    if (DL_SYSCTL_isINITDONEIssued()) { // POSSIBLE IMPORTANT BUG, THIS FLAG SEEMS TO BE SET BY DEFAULT
+
         /* Execution flow for the unprivileged state. Authentication should
          * already be accomplished and the verified image CMAC tag should live
          * in the locked storage. All firewalls should be active.
@@ -262,6 +262,7 @@ int main(void)
             Lock_writeStatus(LOCKSTG_BOOT_STATUS_SUCCESS);
             Lock_writeOut();
 
+            DL_SYSCTL_enableFlashBankSwap();
             /* Set bank from which we wish to execute */
             if (bootRsp.br_image_off != PRIMARY_SLOT_OFFSET) {
                 DL_SYSCTL_executeFromUpperFlashBank();
@@ -279,15 +280,15 @@ int main(void)
         }
 
         // /* Set Firewalls (to be enabled upon INITDONE) */
-        // DL_SYSCTL_setWriteProtectFirewallAddrRange( // AVOID LOCKING ANY SECTION
-        //     (uint32_t) LOCKABLE_FLASH_FIREWALL);// AVOID LOCKING ANY SECTION
+        DL_SYSCTL_setWriteProtectFirewallAddrRange( // AVOID LOCKING ANY SECTION
+            (uint32_t) LOCKABLE_FLASH_FIREWALL);// AVOID LOCKING ANY SECTION
 
         // DL_SYSCTL_setReadExecuteProtectFirewallAddrStart(CSC_SECRET_ADDR);// AVOID LOCKING ANY SECTION
         // DL_SYSCTL_setReadExecuteProtectFirewallAddrEnd(CSC_SECRET_END);// AVOID LOCKING ANY SECTION
 
         // DL_SYSCTL_enableReadExecuteProtectFirewall();// AVOID LOCKING ANY SECTION
 
-        start_app((uint32_t *) (PRIMARY_SLOT_OFFSET + 0x100));//FORCE APP START HERE DUE TO DL_SYSCTL_isINITDONEIssued POSSIBLE BUG
+        //start_app((uint32_t *) (bootRsp.br_image_off + 0x100));//FORCE APP START HERE DUE TO DL_SYSCTL_isINITDONEIssued POSSIBLE BUG
 
         DL_SYSCTL_issueINITDONE();
     }

@@ -50,7 +50,7 @@ const BCR_Config BCRConfig =
     .swdpMode             = BCR_CFG_SWDP_EN,
     .tifaMode             = BCR_CFG_TIFA_EN,
     .bslPinInvokeEnable   = BCR_CFG_BSL_PIN_INVOKE_EN,
-    .staticWriteProtectionMainLow  = 0xfffc0000,
+    .staticWriteProtectionMainLow  = 0xfffe0000,
     .staticWriteProtectionMainHigh = CFG_DEFAULT_VALUE,
     .staticWriteProtectionNonMain  = BCR_CFG_NON_MAIN_STATIC_PROT_EN,
     .debugHold            = BCR_CFG_DEBUG_HOLD_DIS,
@@ -81,7 +81,7 @@ const BCR_Config BCRConfig =
         CFG_DEFAULT_VALUE, CFG_DEFAULT_VALUE,
         CFG_DEFAULT_VALUE, CFG_DEFAULT_VALUE},
     .bc_reserved_1                 = 0xFFFFFFFFU,
-    .userCfgCRC                    = 0x12cc56b0,
+    .userCfgCRC                    = 0x4c309e82,
 };
 
 
