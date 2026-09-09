@@ -47,6 +47,12 @@ int boot_status_fails = 0;
 #define BOOT_STATUS_ASSERT(x) ASSERT(x)
 #endif
 
+/* TEMPORARY DEBUG (2026-09-08): checkpoint 23 (in loader.c, right after
+ * boot_read_image_headers() returns) never fires after a real OTA-triggered
+ * reset, so the hang is somewhere inside this function - the only thing
+ * boot_read_image_headers() actually calls per slot. */
+extern void debugPulse(uint32_t count);
+
 int
 boot_read_image_header(struct boot_loader_state *state, int slot,
                        struct image_header *out_hdr, struct boot_status *bs)
@@ -61,14 +67,21 @@ boot_read_image_header(struct boot_loader_state *state, int slot,
     (void)state;
 #endif
 
+    debugPulse(30); /* entered boot_read_image_header() */
+    debugPulse((uint32_t)slot + 1); /* extra pulses = slot + 1, so 1=primary, 2=secondary */
+
     area_id = flash_area_id_from_multi_image_slot(BOOT_CURR_IMG(state), slot);
     rc = flash_area_open(area_id, &fap);
+    debugPulse(31); /* this slot's local flash_area_open() returned */
+    debugPulse((rc == 0) ? 1 : 0);
     if (rc != 0) {
         rc = BOOT_EFLASH;
         goto done;
     }
 
     rc = flash_area_read(fap, 0, out_hdr, sizeof *out_hdr);
+    debugPulse(32); /* flash_area_read() of the header returned */
+    debugPulse((rc == 0) ? 1 : 0);
     if (rc != 0) {
         rc = BOOT_EFLASH;
         goto done;
@@ -78,6 +91,7 @@ boot_read_image_header(struct boot_loader_state *state, int slot,
 
 done:
     flash_area_close(fap);
+    debugPulse(33); /* about to return from boot_read_image_header() */
     return rc;
 }
 

@@ -2476,6 +2476,13 @@ boot_go(struct boot_rsp *rsp)
     FIH_RET(fih_rc);
 }
 
+/* TEMPORARY DEBUG (2026-09-08): traces where inside this function the CSC
+ * hangs after a real OTA-triggered reset - checkpoint 11 in
+ * customer_secure_code.c (right after this function returns) never fires,
+ * so something in here either never returns or resets the device before
+ * getting back to the caller. See debugPulse()'s own comment. */
+extern void debugPulse(uint32_t count);
+
 /* The following has been added by TI */
 fih_int
 context_return_highest_version(struct boot_loader_state *state, struct boot_rsp *rsp)
@@ -2492,6 +2499,7 @@ context_return_highest_version(struct boot_loader_state *state, struct boot_rsp 
     fih_int fih_rc = FIH_FAILURE;
 
     memset(state, 0, sizeof(struct boot_loader_state));
+    debugPulse(20); /* entered context_return_highest_version(), memset done */
 
     /* Open primary and secondary image areas for the duration
      * of this call.
@@ -2499,11 +2507,16 @@ context_return_highest_version(struct boot_loader_state *state, struct boot_rsp 
     for (slot = 0; slot < BOOT_NUM_SLOTS; slot++) {
         fa_id = flash_area_id_from_image_slot(slot);
         rc = flash_area_open(fa_id, &BOOT_IMG_AREA(state, slot));
+        debugPulse(21); /* one flash_area_open() call returned - fires once per slot, so twice total if both open cleanly */
+        debugPulse((rc == 0) ? 1 : 0); /* extra single pulse if THIS open succeeded */
         assert(rc == 0);
     }
+    debugPulse(22); /* both flash areas opened, assert()s survived */
 
     /* Attempt to read an image header from each slot. */
     rc = boot_read_image_headers(state, false, NULL);
+    debugPulse(23); /* boot_read_image_headers() returned */
+    debugPulse((rc == 0) ? 1 : 0);
     if (rc != 0) {
         BOOT_LOG_WRN("Failed reading image headers.");
         goto out;
@@ -2511,6 +2524,8 @@ context_return_highest_version(struct boot_loader_state *state, struct boot_rsp 
 
     img_cnt = boot_get_slot_usage(state, slot_usage,
                                   sizeof(slot_usage)/sizeof(slot_usage[0]));
+    debugPulse(24); /* boot_get_slot_usage() returned */
+    debugPulse(img_cnt); /* extra pulses = img_cnt value (0, 1, or 2) */
 
     if (img_cnt) {
         /* Select the newest and valid image. */

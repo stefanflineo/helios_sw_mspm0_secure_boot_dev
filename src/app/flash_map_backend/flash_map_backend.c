@@ -187,6 +187,8 @@ void flash_area_close(const struct flash_area *fa)
 /*
 * Reads `len` bytes of flash memory at `off` to the buffer at `dst`
 */
+extern void debugPulse(uint32_t count);
+
 int flash_area_read(
     const struct flash_area *fa, uint32_t off, void *dst, uint32_t len)
 {
@@ -194,11 +196,17 @@ int flash_area_read(
     size_t addr;
     uint32_t readBuf[] = {0x00, 0x00};
 
+    debugPulse(40); /* entered flash_area_read() */
+
     /* convert to absolute address inside a device*/
     addr = fa->fa_off + off;
 
+    debugPulse(41); /* about to run the bounds-check assert() (which calls mcubootFail() if it fires) */
+
     /* check if read is within bounds */
     assert((addr + len) > (fa->fa_off + fa->fa_size))
+
+    debugPulse(42); /* bounds-check assert() survived */
 
         if (fa->fa_device_id == FLASH_DEVICE_INTERNAL_FLASH)
     {
@@ -211,6 +219,8 @@ int flash_area_read(
         /* incorrect/non-existing flash device id */
         rc = -1;
     }
+
+    debugPulse(43); /* memcpy (or the else branch) completed */
 
     if (rc != 0) {
         BOOT_LOG_ERR("Flash area read error, rc = %d", (int) rc);
